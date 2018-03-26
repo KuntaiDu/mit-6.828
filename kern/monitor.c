@@ -24,6 +24,7 @@ struct Command {
 static struct Command commands[] = {
 	{ "help", "Display this list of commands", mon_help },
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
+	{ "backtrace", "Display backtrace information about the stack", mon_backtrace }
 };
 
 /***** Implementations of basic kernel monitor commands *****/
@@ -57,7 +58,50 @@ mon_kerninfo(int argc, char **argv, struct Trapframe *tf)
 int
 mon_backtrace(int argc, char **argv, struct Trapframe *tf)
 {
-	// Your code here.
+	
+	// First get the position of ebp
+	typedef unsigned int *ptr;
+	ptr ebp = (ptr) read_ebp();
+	cprintf("Stack backtrace:\n");
+
+	// Use this variable to fetch debuginfo
+	struct Eipdebuginfo debug_info;
+
+	// Use this variable to store eip
+	ptr eip = NULL;
+
+	while (ebp != NULL) {
+
+		// Get eip
+		eip = (ptr)*(ebp + 1);
+
+		// Print ebp and eip
+		cprintf("ebp %08x ", ebp);
+		cprintf("eip %08x ", eip);
+
+		// Print args
+		cprintf("args");
+		for(int i = 2; i <= 6; i ++) {
+			cprintf(" %08x", *(ebp + i));
+		}
+		cprintf("\n");
+
+		// Get debug_info and print it
+		debuginfo_eip((uintptr_t) eip, &debug_info);
+
+		// Note that we need to make debug_info.eip_fn_name shorter
+		cprintf("\t%s:%d: %.*s+%d\n",
+				debug_info.eip_file,
+				debug_info.eip_line,
+				debug_info.eip_fn_namelen,
+				debug_info.eip_fn_name,
+				(uintptr_t) eip - debug_info.eip_fn_addr);
+
+		// Goto upper-level function
+		ebp = (ptr) *ebp;
+
+	}
+
 	return 0;
 }
 
