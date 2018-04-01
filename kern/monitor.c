@@ -24,7 +24,9 @@ struct Command {
 static struct Command commands[] = {
 	{ "help", "Display this list of commands", mon_help },
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
-	{ "backtrace", "Display backtrace information about the stack", mon_backtrace }
+	{ "backtrace", "Display backtrace information about the stack", mon_backtrace },
+	{ "showmappings", "Display the page mappings in range [begin_address, end_address)",
+	  mon_showmappings }
 };
 
 /***** Implementations of basic kernel monitor commands *****/
@@ -100,6 +102,42 @@ mon_backtrace(int argc, char **argv, struct Trapframe *tf)
 		// Goto upper-level function
 		ebp = (ptr) *ebp;
 
+	}
+
+	return 0;
+}
+
+int mon_showmappings(int argc, char **argv, struct Trapframe *tf) {
+	// Extern variables
+	extern pte_t *pgdir_walk(pde_t *pgdir, const void *va, int create);
+	extern pde_t *kern_pgdir;
+
+	if (argc != 3) {
+		cprintf("Usage: showmappings: begin_address end_address\n");
+		return 0;
+	}
+
+	long begin = strtol(argv[1], NULL, 16);
+	long end = strtol(argv[2], NULL, 16);
+
+	// Sanity check
+	assert(begin < end);
+	assert(end <= 0xffffffff);
+	assert(begin == ROUNDUP(begin, PGSIZE));
+	assert(end == ROUNDUP(end, PGSIZE));
+
+	for (; begin < end; begin += PGSIZE) {
+		cprintf("%08x--%08x: ", begin, begin + PGSIZE);
+		pte_t *pg_tbl_entry = pgdir_walk(kern_pgdir, (void *)begin, 0);
+		if (pg_tbl_entry == NULL) {
+			cprintf("Not mapped\n");
+			continue;
+		}
+		cprintf("page %08x ", PTE_ADDR(*pg_tbl_entry));
+		cprintf("PTE_P: %x, PTE_W: %x, PTE_U: %x\n",
+				*pg_tbl_entry & PTE_P,
+				*pg_tbl_entry & PTE_W,
+				*pg_tbl_entry & PTE_U);
 	}
 
 	return 0;
