@@ -27,7 +27,8 @@ static struct Command commands[] = {
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
 	{ "backtrace", "Display backtrace information about the stack", mon_backtrace },
 	{ "showmappings", "Display the page mappings in range [begin_address, end_address)",
-	  mon_showmappings }
+	  mon_showmappings },
+	{ "continue", "Continue from the last breakpoint.", mon_continue }
 };
 
 /***** Implementations of basic kernel monitor commands *****/
@@ -142,6 +143,28 @@ int mon_showmappings(int argc, char **argv, struct Trapframe *tf) {
 	}
 
 	return 0;
+}
+
+int mon_continue(int argc, char **argv, struct Trapframe *tf) {
+	// Sanity Check
+	if (argc != 1) {
+		cprintf("[W]: Do not need any argument.\n");
+		return 0;
+	}
+	// No breakpoint exception?
+	if (tf->tf_trapno != T_BRKPT) {
+		cprintf("[E]: Cannot continue: no breakpoint exception.\n");
+		return 0;
+	}
+	// Set the Trap Flags
+	extern struct Env *curenv;
+	if (curenv == NULL) {
+		// No process running
+		cprintf("[E]: Cannot continue: no process running.\n");
+		return 0;
+	}
+	// Return to trap_dispatch().
+	return -1;
 }
 
 

@@ -394,7 +394,7 @@ env_create(uint8_t *binary, enum EnvType type)
 	// LAB 3: Your code here.
 	struct Env *e = NULL;
 	int ret;
-	ret = env_alloc(&e, 0) > 0;
+	ret = env_alloc(&e, 0);
 
 	// Sanity check
 	if (ret < 0 ) {

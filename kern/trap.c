@@ -193,13 +193,17 @@ trap_dispatch(struct Trapframe *tf)
 {
 	// Handle processor exceptions.
 	// LAB 3: Your code here
-	
 	switch(tf->tf_trapno) {
 		case T_PGFLT:
 			page_fault_handler(tf);
 			return;
 		case T_BRKPT:
+			cprintf("[W]: Breakpoint exception received. Jump to kernel.\n");
 			monitor(tf);
+
+			curenv->env_tf.tf_eflags |= FL_TF;
+			cprintf("Continue running from the last breakpoint...\n");
+			return;
 		case T_SYSCALL:
 			tf->tf_regs.reg_eax = syscall(
 					tf->tf_regs.reg_eax,
