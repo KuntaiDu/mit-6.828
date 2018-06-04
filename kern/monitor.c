@@ -156,13 +156,6 @@ int mon_continue(int argc, char **argv, struct Trapframe *tf) {
 		cprintf("[E]: Cannot continue: no breakpoint exception.\n");
 		return 0;
 	}
-	// Set the Trap Flags
-	extern struct Env *curenv;
-	if (curenv == NULL) {
-		// No process running
-		cprintf("[E]: Cannot continue: no process running.\n");
-		return 0;
-	}
 	// Return to trap_dispatch().
 	return -1;
 }
