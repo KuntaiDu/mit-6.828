@@ -198,12 +198,22 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 	// Search within [lline, rline] for the line number stab.
 	// If found, set info->eip_line to the right line number.
 	// If not found, return -1.
-	//
-	// Hint:
-	//	There's a particular stabs type used for line numbers.
-	//	Look at the STABS documentation and <inc/stab.h> to find
-	//	which one.
-	// Your code here.
+	// (N_SLINE)
+	lline = lfun;
+	rline = rfun;
+	stab_binsearch(stabs, &lline, &rline, N_SLINE, addr);
+
+	if (lfun <= rfun) {
+		// Found. The lineno lies in the description field of stabs
+		info->eip_line = stabs[lline].n_desc;
+
+	}
+	else {
+		// Not found. Just return -1
+		// Set info->eip_line to stabs[lline].n_desc for robustness.
+		info->eip_line = stabs[lline].n_desc;
+		return -1;
+	}
 
 
 	// Search backwards from the line number for the relevant filename

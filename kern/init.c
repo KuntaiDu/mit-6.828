@@ -32,6 +32,11 @@ i386_init(void)
 	// Can't call cprintf until after we do this!
 	cons_init();
 
+	// To print a color!
+	char esc_char = 0x1b;
+	char color_string[10] = "[91m";
+	cprintf("%c%s", esc_char, color_string);
+
 	cprintf("6828 decimal is %o octal!\n", 6828);
 
 	// Lab 2 memory management initialization functions
@@ -50,6 +55,7 @@ i386_init(void)
 
 	// Acquire the big kernel lock before waking up APs
 	// Your code here:
+	lock_kernel();
 
 	// Starting non-boot CPUs
 	boot_aps();
@@ -122,9 +128,8 @@ mp_main(void)
 	// only one CPU can enter the scheduler at a time!
 	//
 	// Your code here:
-
-	// Remove this after you finish Exercise 6
-	for (;;);
+	lock_kernel();
+	sched_yield();
 }
 
 /*
