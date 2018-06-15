@@ -28,7 +28,8 @@ static struct Command commands[] = {
 	{ "backtrace", "Display backtrace information about the stack", mon_backtrace },
 	{ "showmappings", "Display the page mappings in range [begin_address, end_address)",
 	  mon_showmappings },
-	{ "continue", "Continue from the last breakpoint.", mon_continue }
+	{ "continue", "Continue from the last breakpoint.", mon_continue },
+	{ "swapkey", "Swap key", mon_swapkey }
 };
 
 /***** Implementations of basic kernel monitor commands *****/
@@ -40,6 +41,14 @@ mon_help(int argc, char **argv, struct Trapframe *tf)
 
 	for (i = 0; i < ARRAY_SIZE(commands); i++)
 		cprintf("%s - %s\n", commands[i].name, commands[i].desc);
+	return 0;
+}
+
+int
+mon_swapkey(int argc, char **argv, struct Trapframe *tf) 
+{
+	change_before_char((int)argv[1][0]);
+	change_after_char((int)argv[2][0]);
 	return 0;
 }
 

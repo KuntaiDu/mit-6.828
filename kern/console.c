@@ -133,6 +133,8 @@ lpt_putc(int c)
 static unsigned addr_6845;
 static uint16_t *crt_buf;
 static uint16_t crt_pos;
+static int before_char = -1;
+static int after_char = -1;
 
 static void
 cga_init(void)
@@ -162,7 +164,17 @@ cga_init(void)
 	crt_pos = pos;
 }
 
+void
+change_before_char(int c)
+{
+	before_char = c;
+}
 
+void
+change_after_char(int c)
+{
+	after_char = c;
+}
 
 static void
 cga_putc(int c)
@@ -369,10 +381,19 @@ kbd_proc_data(void)
 	return c;
 }
 
+static int
+wrap_kbd_proc_data(void)
+{
+	int temp = kbd_proc_data();
+	if (temp == before_char)
+		temp = after_char;
+	return temp;
+}
+
 void
 kbd_intr(void)
 {
-	cons_intr(kbd_proc_data);
+	cons_intr(wrap_kbd_proc_data);
 }
 
 static void

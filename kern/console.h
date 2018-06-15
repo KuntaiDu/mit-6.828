@@ -22,5 +22,7 @@ int cons_getc(void);
 
 void kbd_intr(void); // irq 1
 void serial_intr(void); // irq 4
+void change_before_char(int c);
+void change_after_char(int c);
 
 #endif /* _CONSOLE_H_ */
