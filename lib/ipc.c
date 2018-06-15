@@ -60,7 +60,7 @@ ipc_send(envid_t to_env, uint32_t val, void *pg, int perm)
 	// LAB 4: Your code here.
 	int r;
 	if (!pg) {
-		pg = (void *) -1;
+		pg = (void *) UTOP;
 	}
 	
 	for(;;) {
