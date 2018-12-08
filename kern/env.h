@@ -10,6 +10,9 @@ extern struct Env *envs;		// All environments
 #define curenv (thiscpu->cpu_env)		// Current environment
 extern struct Segdesc gdt[];
 
+// Extend: change the type of environment by user.
+void env_set_type(enum EnvType type);
+
 void	env_init(void);
 void	env_init_percpu(void);
 int	env_alloc(struct Env **e, envid_t parent_id);
@@ -18,6 +21,7 @@ void	env_create(uint8_t *binary, enum EnvType type);
 void	env_destroy(struct Env *e);	// Does not return if e == curenv
 
 int	envid2env(envid_t envid, struct Env **env_store, bool checkperm);
+
 // The following two functions do not return
 void	env_run(struct Env *e) __attribute__((noreturn));
 void	env_pop_tf(struct Trapframe *tf) __attribute__((noreturn));

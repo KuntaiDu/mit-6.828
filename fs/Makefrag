@@ -12,7 +12,6 @@ USERAPPS := 		$(OBJDIR)/user/init
 FSIMGTXTFILES :=	fs/newmotd \
 			fs/motd
 
-
 USERAPPS :=		$(USERAPPS) \
 			$(OBJDIR)/user/cat \
 			$(OBJDIR)/user/echo \
@@ -31,6 +30,8 @@ USERAPPS :=		$(USERAPPS) \
 			$(OBJDIR)/user/testshell \
 			$(OBJDIR)/user/hello \
 			$(OBJDIR)/user/faultio \
+			$(OBJDIR)/user/monitor \
+			$(OBJDIR)/user/plus
 
 FSIMGTXTFILES :=	$(FSIMGTXTFILES) \
 			fs/lorem \

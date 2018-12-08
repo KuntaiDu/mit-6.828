@@ -1,0 +1,14 @@
+
+#ifndef JOS_INC_MONITOR_H
+#define JOS_INC_MONITOR_H
+
+enum {
+	MONITOR_MUTEX_INIT = 0,
+	MONITOR_MUTEX_P,
+	MONITOR_MUTEX_V
+};
+
+#define NLOCK 10
+#define NNODE 50
+
+#endif

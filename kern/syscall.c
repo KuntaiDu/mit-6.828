@@ -122,6 +122,12 @@ sys_env_set_status(envid_t envid, int status)
 	return 0;
 }
 
+// Extend: change the type of environment by user.
+static void
+sys_env_set_type(enum EnvType type) {
+	env_set_type(type);
+}
+
 // Set envid's trap frame to 'tf'.
 // tf is modified to make sure that user environments always run at code
 // protection level 3 (CPL 3), interrupts enabled, and IOPL of 0.
@@ -450,6 +456,9 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 		return sys_ipc_recv((void *) a1);
 	case SYS_env_set_trapframe:
 		return sys_env_set_trapframe(a1, (void *) a2);
+	case SYS_env_set_type:
+		sys_env_set_type((enum EnvType) a1);
+		return 0;
 	default:
 		return -E_INVAL;
 	}

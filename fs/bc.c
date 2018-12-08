@@ -84,7 +84,7 @@ flush_block(void *addr)
 	uint32_t blockno = ((uint32_t)addr - DISKMAP) / BLKSIZE;
 
 	if (addr < (void*)DISKMAP || addr >= (void*)(DISKMAP + DISKSIZE))
-		panic("flush_block of bad va %08x", addr);
+		panic("[E]: flush_block of bad va %08x", addr);
 
 	// LAB 5: Your code here.
 	addr = ROUNDDOWN(addr, BLKSIZE);
@@ -94,11 +94,11 @@ flush_block(void *addr)
 
 	int r = ide_write(blockno * BLKSECTS, addr, BLKSECTS);
 	if (r != 0) {
-		panic("flush_block: ide_write failed %e\n", r);
+		panic("[E]: flush_block: ide_write failed %e\n", r);
 	}
 	r = sys_page_map(0, addr, 0, addr, uvpt[PGNUM(addr)] & PTE_SYSCALL);
 	if (r != 0) {
-		panic("flush_block: sys_page_ma failed %e", r);
+		panic("[E]: flush_block: sys_page_ma failed %e", r);
 	}
 }
 

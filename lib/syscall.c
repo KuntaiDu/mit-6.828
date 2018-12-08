@@ -117,3 +117,9 @@ sys_ipc_recv(void *dstva)
 	return syscall(SYS_ipc_recv, 1, (uint32_t)dstva, 0, 0, 0, 0);
 }
 
+/* Cancelled.
+void
+sys_env_set_type(enum EnvType type)
+{
+	syscall(SYS_env_set_type, 0, (uint32_t)type, 0, 0, 0, 0);
+} */
