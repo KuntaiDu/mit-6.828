@@ -26,7 +26,7 @@ Then run
 ```bash
 plus
 ```
-Plus is a process that forks a new process. These two processes prints 1,2,...,100 in turn. We want to make sure that
+Plus is a process that forks a new process. These two processes both print 1,2,...,100. We want to make sure that
 each group in 1,...,10;2,...,20;...;91,...,100 is printed as a whole. This is realized by the P operation
 ``` C
 ipc_send(monitor, MONITOR_MUTEX_P, page, PTE_P | PTE_U);
